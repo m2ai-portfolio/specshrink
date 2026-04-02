@@ -1,0 +1,21 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.2, pluggy-1.6.0 -- /home/apexaipc/projects/yce-harness/generations/metroplex-ideaforge-135-r2/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/apexaipc/projects/yce-harness/generations/metroplex-ideaforge-135-r2
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 11 items
+
+tests/test_parser.py::test_parse_basic_spec PASSED                       [  9%]
+tests/test_parser.py::test_parse_empty_file PASSED                       [ 18%]
+tests/test_parser.py::test_parse_features_only PASSED                    [ 27%]
+tests/test_parser.py::test_parse_external_deps PASSED                    [ 36%]
+tests/test_parser.py::test_parse_integration_points PASSED               [ 45%]
+tests/test_parser.py::test_parse_mixed_content PASSED                    [ 54%]
+tests/test_parser.py::test_parse_case_insensitive_integration PASSED     [ 63%]
+tests/test_parser.py::test_parse_priority_ordering PASSED                [ 72%]
+tests/test_parser.py::test_parse_nonexistent_file PASSED                 [ 81%]
+tests/test_parser.py::test_parse_blank_lines PASSED                      [ 90%]
+tests/test_parser.py::test_parse_returns_spec_metrics PASSED             [100%]
+
+============================== 11 passed in 0.02s ==============================

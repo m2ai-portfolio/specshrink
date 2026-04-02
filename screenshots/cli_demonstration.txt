@@ -1,0 +1,58 @@
+CLI DEMONSTRATION - SpecShrink Feature 1
+========================================
+
+$ specshrink --help
+Usage: python -m specshrink.cli [OPTIONS] COMMAND [ARGS]...
+
+  SpecShrink - Analyze app specifications and recommend scope cuts.
+
+Options:
+  --version  Show the version and exit.
+  --help     Show this message and exit.
+
+Commands:
+  parse  Parse a specification file and display basic metrics.
+
+------------------------------------------------------------------------
+
+$ specshrink parse --help
+Usage: python -m specshrink.cli parse [OPTIONS] FILE
+
+  Parse a specification file and display basic metrics.
+
+Options:
+  --help  Show this message and exit.
+
+------------------------------------------------------------------------
+
+$ cat test_spec.txt
+- Feature: User login
+- Feature: Export PDF
+Uses https://api.payment.com
+Uses database mysql
+
+$ specshrink parse test_spec.txt
+Features: 2
+External deps: 1
+Integration points: 1
+
+------------------------------------------------------------------------
+
+$ cat empty.txt
+(empty file)
+
+$ specshrink parse empty.txt
+Features: 0
+External deps: 0
+Integration points: 0
+
+------------------------------------------------------------------------
+
+$ specshrink parse nonexistent.txt
+Usage: python -m specshrink.cli parse [OPTIONS] FILE
+Try 'python -m specshrink.cli parse --help' for help.
+
+Error: Invalid value for 'FILE': Path 'nonexistent.txt' does not exist.
+Exit code: 2
+
+========================================

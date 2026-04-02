@@ -1,0 +1,91 @@
+QA TEST RESULTS - Feature 1: Parse spec and compute basic metrics
+==================================================================
+
+TEST CASE 1: Basic parsing
+---------------------------
+Input file:
+- Feature: User login
+- Feature: Export PDF
+Uses https://api.payment.com
+Uses database mysql
+
+Command: specshrink parse <tempfile>
+Output:
+Features: 2
+External deps: 1
+Integration points: 1
+
+Expected: Features: 2, External deps: 1, Integration points: 1
+RESULT: PASS ✓
+
+TEST CASE 2: Empty file
+-----------------------
+Input: Empty file
+Command: specshrink parse <emptyfile>
+Output:
+Features: 0
+External deps: 0
+Integration points: 0
+
+Expected: Features: 0, External deps: 0, Integration points: 0
+RESULT: PASS ✓
+
+TEST CASE 3: File not found
+---------------------------
+Command: specshrink parse /tmp/nonexistent_file_xyz123.txt
+Output:
+Exit code: 2
+Error: Invalid value for 'FILE': Path '/tmp/nonexistent_file_xyz123.txt' does not exist.
+
+Expected: Error message, non-zero exit code
+RESULT: PASS ✓
+
+TEST CASE 4: Case insensitivity
+-------------------------------
+Input file:
+Uses DATABASE postgres
+Contains WEBHOOK handler
+
+Command: specshrink parse <file>
+Output:
+Features: 0
+External deps: 0
+Integration points: 2
+
+Expected: Integration points: 2
+RESULT: PASS ✓
+
+TEST CASE 5: CLI help
+---------------------
+Command: specshrink --help
+Output: Shows usage info with commands and options ✓
+
+Command: specshrink parse --help
+Output: Shows parse command usage with options ✓
+
+RESULT: PASS ✓
+
+TEST CASE 6: Run pytest
+-----------------------
+Command: pytest tests/test_parser.py -v
+Results:
+- test_parse_basic_spec PASSED
+- test_parse_empty_file PASSED
+- test_parse_features_only PASSED
+- test_parse_external_deps PASSED
+- test_parse_integration_points PASSED
+- test_parse_mixed_content PASSED
+- test_parse_case_insensitive_integration PASSED
+- test_parse_priority_ordering PASSED
+- test_parse_nonexistent_file PASSED
+- test_parse_blank_lines PASSED
+- test_parse_returns_spec_metrics PASSED
+
+11 passed in 0.02s
+
+RESULT: PASS ✓
+
+==================================================================
+OVERALL VERDICT: PASS
+All 6 test cases completed successfully.
+==================================================================

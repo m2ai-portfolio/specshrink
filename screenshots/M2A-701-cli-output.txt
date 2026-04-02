@@ -1,0 +1,3 @@
+Features: 2
+External deps: 1
+Integration points: 1
