@@ -3,8 +3,9 @@
 import os
 import click
 from rich.console import Console
-from specshrink.parser import parse_spec
+from specshrink.parser import parse_spec, parse_spec_detailed
 from specshrink.scorer import score_spec
+from specshrink.suggester import suggest_cuts
 
 
 console = Console()
@@ -45,11 +46,14 @@ def score(file):
         # Get threshold from environment variable, default to 5
         threshold = int(os.environ.get('SPECSHRINK_THRESHOLD', '5'))
 
-        # Parse the specification
-        metrics = parse_spec(file)
+        # Parse the specification with detailed items
+        parsed_spec = parse_spec_detailed(file)
 
         # Score the specification
-        scored_metrics = score_spec(metrics, threshold)
+        scored_metrics = score_spec(parsed_spec.metrics, threshold)
+
+        # Update the parsed_spec with scored metrics
+        parsed_spec.metrics = scored_metrics
 
         # Display the results
         console.print(f"Estimated iterations: {scored_metrics.estimated_iterations}")
@@ -58,6 +62,13 @@ def score(file):
             console.print(f"Verdict: PASS (≤{threshold})")
         else:
             console.print(f"Verdict: FAIL (>{threshold})")
+
+            # Display suggestions when FAIL
+            suggestions = suggest_cuts(parsed_spec, threshold)
+            if suggestions:
+                console.print("Suggestions:")
+                for suggestion in suggestions:
+                    console.print(f"- {suggestion}")
 
     except FileNotFoundError as e:
         console.print(f"[red]Error:[/red] {e}", style="bold red")

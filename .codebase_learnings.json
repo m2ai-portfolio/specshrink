@@ -1,0 +1,40 @@
+{
+  "project": "SpecShrink",
+  "tech_stack": "Python 3.11+, click, rich",
+  "codebase_patterns": {
+    "framework": "Python CLI with click command groups and rich terminal output",
+    "file_structure": "specshrink/ (source), tests/ (pytest), tests/fixtures/ (test data)",
+    "data_flow": "Parser returns SpecMetrics/ParsedSpec -> Scorer enriches with estimates -> Suggester generates recommendations",
+    "testing_pattern": "pytest with tmp_path fixture for file-based tests, comprehensive edge case coverage",
+    "cli_structure": "Click command group with subcommands (parse, score)",
+    "error_display": "Rich console for formatted output with color tags like [red]Error:[/red]"
+  },
+  "common_mistakes_to_avoid": [
+    "Spec says 'round up' but expected output shows truncation (int()) - always prioritize expected test output over ambiguous spec text",
+    "Don't duplicate version strings - import from __init__.py",
+    "Don't use broad 'except Exception' catches - prefer specific exceptions",
+    "Validate environment variable inputs before int() conversion",
+    "Remove unused imports (e.g., import math when using int() truncation)"
+  ],
+  "effective_patterns": [
+    "Priority-based parsing: each line counted in only one category (features > deps > integration)",
+    "Explicit UTF-8 encoding on all file operations",
+    "ParsedSpec wraps SpecMetrics + item lists for suggestion generation",
+    "Reverse-order sorting with (-savings, -index) for tie-breaking",
+    "New SpecMetrics instances returned (not mutated) for functional style"
+  ],
+  "security_best_practices": [
+    "File operations use pathlib.Path for safe path handling",
+    "No dynamic code execution (eval, exec, compile)",
+    "UTF-8 encoding explicitly specified prevents encoding attacks",
+    "Click validates file existence before processing"
+  ],
+  "sessions": [
+    {
+      "session": 1,
+      "features_completed": ["M2A-701: Parse spec", "M2A-702: Score complexity", "M2A-703: Suggest cuts"],
+      "total_tests": 31,
+      "notes": "All 3 features implemented in single session. Project complete."
+    }
+  ]
+}
