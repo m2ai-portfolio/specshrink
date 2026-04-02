@@ -1,0 +1,34 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.2, pluggy-1.6.0 -- /home/apexaipc/projects/yce-harness/generations/metroplex-ideaforge-135-r2/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/apexaipc/projects/yce-harness/generations/metroplex-ideaforge-135-r2
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 24 items
+
+tests/test_parser.py::test_parse_basic_spec PASSED                       [  4%]
+tests/test_parser.py::test_parse_empty_file PASSED                       [  8%]
+tests/test_parser.py::test_parse_features_only PASSED                    [ 12%]
+tests/test_parser.py::test_parse_external_deps PASSED                    [ 16%]
+tests/test_parser.py::test_parse_integration_points PASSED               [ 20%]
+tests/test_parser.py::test_parse_mixed_content PASSED                    [ 25%]
+tests/test_parser.py::test_parse_case_insensitive_integration PASSED     [ 29%]
+tests/test_parser.py::test_parse_priority_ordering PASSED                [ 33%]
+tests/test_parser.py::test_parse_nonexistent_file PASSED                 [ 37%]
+tests/test_parser.py::test_parse_blank_lines PASSED                      [ 41%]
+tests/test_parser.py::test_parse_returns_spec_metrics PASSED             [ 45%]
+tests/test_scorer.py::test_score_basic_spec PASSED                       [ 50%]
+tests/test_scorer.py::test_score_with_default_threshold PASSED           [ 54%]
+tests/test_scorer.py::test_score_within_limit PASSED                     [ 58%]
+tests/test_scorer.py::test_score_exceeds_limit PASSED                    [ 62%]
+tests/test_scorer.py::test_score_exactly_at_limit PASSED                 [ 66%]
+tests/test_scorer.py::test_score_empty_spec PASSED                       [ 70%]
+tests/test_scorer.py::test_score_features_only PASSED                    [ 75%]
+tests/test_scorer.py::test_score_deps_only PASSED                        [ 79%]
+tests/test_scorer.py::test_score_integration_only PASSED                 [ 83%]
+tests/test_scorer.py::test_score_truncation PASSED                       [ 87%]
+tests/test_scorer.py::test_score_with_low_threshold PASSED               [ 91%]
+tests/test_scorer.py::test_score_with_high_threshold PASSED              [ 95%]
+tests/test_scorer.py::test_score_preserves_original_counts PASSED        [100%]
+
+============================== 24 passed in 0.02s ==============================

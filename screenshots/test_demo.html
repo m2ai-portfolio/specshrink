@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpecShrink Feature 2 - Score Command Demo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+        h1 {
+            color: #4ec9b0;
+            border-bottom: 2px solid #4ec9b0;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #569cd6;
+            margin-top: 30px;
+        }
+        .terminal {
+            background: #000;
+            color: #0f0;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            border: 1px solid #333;
+        }
+        .test-result {
+            background: #2d2d30;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #4ec9b0;
+        }
+        .pass {
+            color: #4ec9b0;
+            font-weight: bold;
+        }
+        .fail {
+            color: #f48771;
+            font-weight: bold;
+        }
+        .command {
+            color: #ce9178;
+        }
+        .output {
+            color: #d4d4d4;
+        }
+        .spec-file {
+            background: #2d2d30;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #569cd6;
+        }
+        .calculation {
+            background: #2d2d30;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #dcdcaa;
+        }
+        .metric {
+            color: #dcdcaa;
+        }
+    </style>
+</head>
+<body>
+    <h1>SpecShrink Feature 2 - Score Command Demo</h1>
+    <p>Feature 2 implementation: Score complexity and compare to iteration budget</p>
+
+    <h2>Test Specification File</h2>
+    <div class="spec-file">
+        <strong>tests/fixtures/test_spec.txt:</strong>
+        <div class="terminal">- Feature: User login
+- Feature: Export PDF
+Uses https://api.payment.com
+Uses database mysql</div>
+    </div>
+
+    <h2>Scoring Calculation</h2>
+    <div class="calculation">
+        <p><strong>Parsed Metrics:</strong></p>
+        <ul>
+            <li><span class="metric">Features:</span> 2</li>
+            <li><span class="metric">External deps:</span> 1</li>
+            <li><span class="metric">Integration points:</span> 1</li>
+        </ul>
+        <p><strong>Formula:</strong></p>
+        <code>estimated = features*1 + external_deps*1.5 + integration_points*2</code>
+        <p><strong>Calculation:</strong></p>
+        <code>estimated = 2*1 + 1*1.5 + 1*2 = 2 + 1.5 + 2 = 5.5</code>
+        <p><strong>Result (truncated):</strong> int(5.5) = 5</p>
+    </div>
+
+    <h2>Test Case 1: Default Threshold (5)</h2>
+    <div class="test-result">
+        <p><strong class="command">Command:</strong></p>
+        <div class="terminal">$ specshrink score tests/fixtures/test_spec.txt</div>
+        <p><strong class="output">Output:</strong></p>
+        <div class="terminal">Estimated iterations: 5
+Verdict: <span class="pass">PASS (≤5)</span></div>
+        <p><strong>Result:</strong> <span class="pass">✓ PASSED</span> - Estimated 5 iterations is within threshold of 5</p>
+    </div>
+
+    <h2>Test Case 2: Lower Threshold (4)</h2>
+    <div class="test-result">
+        <p><strong class="command">Command:</strong></p>
+        <div class="terminal">$ SPECSHRINK_THRESHOLD=4 specshrink score tests/fixtures/test_spec.txt</div>
+        <p><strong class="output">Output:</strong></p>
+        <div class="terminal">Estimated iterations: 5
+Verdict: <span class="fail">FAIL (>4)</span></div>
+        <p><strong>Result:</strong> <span class="pass">✓ PASSED</span> - Correctly identifies that 5 iterations exceeds threshold of 4</p>
+    </div>
+
+    <h2>Unit Tests</h2>
+    <div class="test-result">
+        <p><strong class="command">Command:</strong></p>
+        <div class="terminal">$ pytest tests/test_scorer.py -v</div>
+        <p><strong>Results:</strong></p>
+        <div class="terminal">tests/test_scorer.py::test_score_basic_spec <span class="pass">PASSED</span>
+tests/test_scorer.py::test_score_with_default_threshold <span class="pass">PASSED</span>
+tests/test_scorer.py::test_score_within_limit <span class="pass">PASSED</span>
+tests/test_scorer.py::test_score_exceeds_limit <span class="pass">PASSED</span>
+tests/test_scorer.py::test_score_exactly_at_limit <span class="pass">PASSED</span>
+tests/test_scorer.py::test_score_empty_spec <span class="pass">PASSED</span>
+tests/test_scorer.py::test_score_features_only <span class="pass">PASSED</span>
+tests/test_scorer.py::test_score_deps_only <span class="pass">PASSED</span>
+tests/test_scorer.py::test_score_integration_only <span class="pass">PASSED</span>
+tests/test_scorer.py::test_score_truncation <span class="pass">PASSED</span>
+tests/test_scorer.py::test_score_with_low_threshold <span class="pass">PASSED</span>
+tests/test_scorer.py::test_score_with_high_threshold <span class="pass">PASSED</span>
+tests/test_scorer.py::test_score_preserves_original_counts <span class="pass">PASSED</span>
+
+======================== <span class="pass">13 passed</span> in 0.02s ========================</div>
+    </div>
+
+    <h2>All Tests (Parser + Scorer)</h2>
+    <div class="test-result">
+        <p><strong class="command">Command:</strong></p>
+        <div class="terminal">$ pytest tests/ -v</div>
+        <p><strong>Results:</strong></p>
+        <div class="terminal">======================== <span class="pass">24 passed</span> in 0.03s ========================</div>
+        <p><strong>Summary:</strong></p>
+        <ul>
+            <li>11 parser tests: <span class="pass">✓ PASSED</span></li>
+            <li>13 scorer tests: <span class="pass">✓ PASSED</span></li>
+            <li>Total: <span class="pass">24/24 PASSED</span></li>
+        </ul>
+    </div>
+
+    <h2>Feature Implementation Summary</h2>
+    <div class="calculation">
+        <h3>Files Modified:</h3>
+        <ul>
+            <li><code>specshrink/scorer.py</code> - Implemented scoring logic</li>
+            <li><code>specshrink/cli.py</code> - Added score subcommand</li>
+            <li><code>tests/test_scorer.py</code> - Implemented comprehensive tests</li>
+        </ul>
+        <h3>Features Implemented:</h3>
+        <ul>
+            <li>✓ Complexity scoring with weighted formula</li>
+            <li>✓ Threshold comparison (default: 5, configurable via SPECSHRINK_THRESHOLD)</li>
+            <li>✓ PASS/FAIL verdict display</li>
+            <li>✓ Rich console output formatting</li>
+            <li>✓ Environment variable support</li>
+            <li>✓ Comprehensive unit tests (13 test cases)</li>
+        </ul>
+    </div>
+</body>
+</html>

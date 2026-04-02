@@ -1,0 +1,189 @@
+================================================================================
+SPECSHRINK - REGRESSION TEST REPORT
+Feature 2 Implementation + Feature 1 Regression Check
+================================================================================
+Date: 2026-04-02
+Project: /home/apexaipc/projects/yce-harness/generations/metroplex-ideaforge-135-r2
+QA Agent: Claude (Sonnet 4.5)
+
+================================================================================
+EXECUTIVE SUMMARY
+================================================================================
+
+regression_test: PASS
+overall_verdict: ALL TESTS PASSED - NO REGRESSIONS DETECTED
+
+new_feature:
+  name: "Feature 2 - Score complexity (specshrink score command)"
+  status: PASS
+  details: "All 3 test cases passed with exact expected output"
+
+existing_features:
+  - "Feature 1 - Parse command (specshrink parse)" - PASS (No regression)
+
+================================================================================
+DETAILED TEST RESULTS
+================================================================================
+
+TEST CASE 1: Score with Default Threshold (Feature 2 - PASS case)
+------------------------------------------------------------------
+Command: specshrink score test_spec.txt
+Input File:
+  - Feature: User login
+  - Feature: Export PDF
+  Uses https://api.payment.com
+  Uses database mysql
+
+Expected Output:
+  Estimated iterations: 5
+  Verdict: PASS (≤5)
+
+Actual Output:
+  Estimated iterations: 5
+  Verdict: PASS (≤5)
+
+Result: PASS ✓ (Exact match)
+
+
+TEST CASE 2: Score with Custom Threshold (Feature 2 - FAIL case)
+-----------------------------------------------------------------
+Command: SPECSHRINK_THRESHOLD=4 specshrink score test_spec.txt
+Input: Same as Test Case 1
+
+Expected Output:
+  Estimated iterations: 5
+  Verdict: FAIL (>4)
+
+Actual Output:
+  Estimated iterations: 5
+  Verdict: FAIL (>4)
+
+Result: PASS ✓ (Exact match, environment variable works correctly)
+
+
+TEST CASE 3: Error Handling (Feature 2 - File Not Found)
+---------------------------------------------------------
+Command: specshrink score nonexistent_file.txt
+
+Expected: Error message with non-zero exit code
+
+Actual Output:
+  Exit code: 2
+  Error: Invalid value for 'FILE': Path '/tmp/nonexistent_file.txt' does not exist.
+
+Result: PASS ✓ (Proper error handling, non-zero exit code)
+
+
+TEST CASE 4: Parse Command Regression (Feature 1)
+--------------------------------------------------
+Command: specshrink parse test_spec.txt
+Input: Same test specification as above
+
+Expected Output:
+  Features: 2
+  External deps: 1
+  Integration points: 1
+
+Actual Output:
+  Features: 2
+  External deps: 1
+  Integration points: 1
+
+Result: PASS ✓ (No regression, Feature 1 still works correctly)
+
+
+TEST CASE 5: Full Pytest Test Suite
+------------------------------------
+Command: pytest tests/ -v
+
+Expected: All 24 tests pass (11 parser + 13 scorer)
+
+Actual Results:
+  Parser Tests (Feature 1):
+    ✓ test_parse_basic_spec
+    ✓ test_parse_empty_file
+    ✓ test_parse_features_only
+    ✓ test_parse_external_deps
+    ✓ test_parse_integration_points
+    ✓ test_parse_mixed_content
+    ✓ test_parse_case_insensitive_integration
+    ✓ test_parse_priority_ordering
+    ✓ test_parse_nonexistent_file
+    ✓ test_parse_blank_lines
+    ✓ test_parse_returns_spec_metrics
+  
+  Scorer Tests (Feature 2):
+    ✓ test_score_basic_spec
+    ✓ test_score_with_default_threshold
+    ✓ test_score_within_limit
+    ✓ test_score_exceeds_limit
+    ✓ test_score_exactly_at_limit
+    ✓ test_score_empty_spec
+    ✓ test_score_features_only
+    ✓ test_score_deps_only
+    ✓ test_score_integration_only
+    ✓ test_score_truncation
+    ✓ test_score_with_low_threshold
+    ✓ test_score_with_high_threshold
+    ✓ test_score_preserves_original_counts
+
+  Total: 24 passed in 0.02s
+
+Result: PASS ✓ (100% test coverage passing)
+
+================================================================================
+FEATURE STATUS SUMMARY
+================================================================================
+
+Feature 2 (NEW - Score Complexity Command):
+  ✓ Default threshold (5) scoring works correctly
+  ✓ Custom threshold via SPECSHRINK_THRESHOLD env var works
+  ✓ PASS/FAIL verdict calculation accurate
+  ✓ Error handling for missing files functional
+  ✓ All 13 unit tests passing
+  Overall: PASS
+
+Feature 1 (REGRESSION - Parse Command):
+  ✓ Parse output format unchanged
+  ✓ Correct counting of features, deps, integration points
+  ✓ All 11 unit tests still passing
+  ✓ No breaking changes detected
+  Overall: PASS (No regression)
+
+================================================================================
+EVIDENCE FILES
+================================================================================
+
+screenshots:
+  - /home/apexaipc/projects/yce-harness/generations/metroplex-ideaforge-135-r2/screenshots/regression-overall-results.txt
+  - /home/apexaipc/projects/yce-harness/generations/metroplex-ideaforge-135-r2/screenshots/regression-feature2-default-threshold.txt
+  - /home/apexaipc/projects/yce-harness/generations/metroplex-ideaforge-135-r2/screenshots/regression-feature2-custom-threshold.txt
+  - /home/apexaipc/projects/yce-harness/generations/metroplex-ideaforge-135-r2/screenshots/regression-feature1-parse.txt
+  - /home/apexaipc/projects/yce-harness/generations/metroplex-ideaforge-135-r2/screenshots/regression-pytest-full-suite.txt
+  - /home/apexaipc/projects/yce-harness/generations/metroplex-ideaforge-135-r2/screenshots/REGRESSION-TEST-FINAL-REPORT.txt
+
+================================================================================
+ISSUES FOUND
+================================================================================
+
+issues_found: none
+
+No regressions detected.
+No bugs found in new feature.
+All edge cases handled correctly.
+All test coverage passing.
+
+================================================================================
+RECOMMENDATIONS
+================================================================================
+
+1. Feature 2 is ready for production use
+2. No regressions in Feature 1 - safe to deploy
+3. Test coverage is comprehensive (24 tests covering both features)
+4. Error handling is robust
+
+DEPLOYMENT RECOMMENDATION: APPROVED ✓
+
+================================================================================
+END OF REPORT
+================================================================================

@@ -1,0 +1,23 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.2, pluggy-1.6.0 -- /home/apexaipc/projects/yce-harness/generations/metroplex-ideaforge-135-r2/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/apexaipc/projects/yce-harness/generations/metroplex-ideaforge-135-r2
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 13 items
+
+tests/test_scorer.py::test_score_basic_spec PASSED                       [  7%]
+tests/test_scorer.py::test_score_with_default_threshold PASSED           [ 15%]
+tests/test_scorer.py::test_score_within_limit PASSED                     [ 23%]
+tests/test_scorer.py::test_score_exceeds_limit PASSED                    [ 30%]
+tests/test_scorer.py::test_score_exactly_at_limit PASSED                 [ 38%]
+tests/test_scorer.py::test_score_empty_spec PASSED                       [ 46%]
+tests/test_scorer.py::test_score_features_only PASSED                    [ 53%]
+tests/test_scorer.py::test_score_deps_only PASSED                        [ 61%]
+tests/test_scorer.py::test_score_integration_only PASSED                 [ 69%]
+tests/test_scorer.py::test_score_truncation PASSED                       [ 76%]
+tests/test_scorer.py::test_score_with_low_threshold PASSED               [ 84%]
+tests/test_scorer.py::test_score_with_high_threshold PASSED              [ 92%]
+tests/test_scorer.py::test_score_preserves_original_counts PASSED        [100%]
+
+============================== 13 passed in 0.01s ==============================

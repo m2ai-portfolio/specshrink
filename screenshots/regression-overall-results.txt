@@ -1,0 +1,74 @@
+========================================
+SPECSHRINK REGRESSION TEST RESULTS
+========================================
+
+TEST CASE 1: Score with default threshold (PASS case)
+Command: specshrink score test_spec.txt
+Expected Output:
+  Estimated iterations: 5
+  Verdict: PASS (≤5)
+Actual Output:
+  Estimated iterations: 5
+  Verdict: PASS (≤5)
+Status: PASS ✓
+
+----------------------------------------
+
+TEST CASE 2: Score with lower threshold (FAIL case)
+Command: SPECSHRINK_THRESHOLD=4 specshrink score test_spec.txt
+Expected Output:
+  Estimated iterations: 5
+  Verdict: FAIL (>4)
+Actual Output:
+  Estimated iterations: 5
+  Verdict: FAIL (>4)
+Status: PASS ✓
+
+----------------------------------------
+
+TEST CASE 3: Score with file not found
+Command: specshrink score nonexistent_file.txt
+Expected: Error message, non-zero exit code
+Actual: Exit code 2 with error message
+Status: PASS ✓
+
+----------------------------------------
+
+TEST CASE 4: Parse regression test
+Command: specshrink parse test_spec.txt
+Expected Output:
+  Features: 2
+  External deps: 1
+  Integration points: 1
+Actual Output:
+  Features: 2
+  External deps: 1
+  Integration points: 1
+Status: PASS ✓
+
+----------------------------------------
+
+TEST CASE 5: Full pytest suite
+Command: pytest tests/ -v
+Expected: All 24 tests pass
+Actual: 24 passed in 0.03s
+Status: PASS ✓
+
+========================================
+OVERALL VERDICT: PASS
+========================================
+
+Feature 2 (Score complexity): PASS
+  - Default threshold scoring: PASS
+  - Custom threshold scoring: PASS
+  - Error handling: PASS
+
+Feature 1 (Parse command): PASS (No regression)
+  - Parse command output correct: PASS
+  - All 11 parser unit tests: PASS
+
+Test Coverage:
+  - Parser tests: 11/11 PASS
+  - Scorer tests: 13/13 PASS
+  - Total: 24/24 PASS
+

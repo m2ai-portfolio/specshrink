@@ -1,0 +1,2 @@
+Estimated iterations: 5
+Verdict: PASS (≤5)
