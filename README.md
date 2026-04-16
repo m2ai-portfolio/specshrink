@@ -1,84 +1,128 @@
 
 
-# SpecShrink
+<p align="center">
+  <img src="assets/infographic.png" alt="SpecShrink" width="800">
+</p>
 
+<h3 align="center">CLI tool that scores app_spec.txt complexity: counts features, external deps, integration points, estimated iteration budget. Flags specs likely to exceed 5 iterations and suggests cuts.</h3>
 
-## Overview
-SpecShrink is a command‑line utility that analyzes formal specification files, scores their quality, and provides actionable suggestions for improvement. It is aimed at software engineers, architects, and technical writers who need to keep large specification documents clear, consistent, and maintainable.
+<p align="center">
+  <a href="#quick-start">Quick Start</a> &bull;
+  <a href="#features">Features</a> &bull;
+  <a href="#examples">Examples</a> &bull;
+  <a href="#contributing">Contributing</a>
+</p>
 
-## Problem Statement
-Large technical specifications often suffer from redundancy, ambiguous wording, and inconsistent formatting, making them hard to review and evolve. Manual inspection is time‑consuming and error‑prone. SpecShrink automates the detection of these issues, quantifies spec health, and recommends concrete refactorings to shrink the spec while preserving its intent.
+## What is this?
+
+SpecShrink is a command‑line utility that reads an `app_spec.txt` file, quantifies its scope, and predicts whether it can be built within a five‑iteration limit. It is aimed at developers and autonomous pipelines that need a fast pre‑screen to avoid wasting compute on over‑scoped ideas.
+
+```
+$ specshrink specs/example_app_spec.txt
+Features: 10   External deps: 3   Integration points: 5   Est. iterations: 7
+Result: EXCEEDS threshold (5) – Suggested cuts: remove feature “auto‑export”, merge “validation” and “sanitization”
+```
+
+## Problem
+
+Autonomous build pipelines frequently fail on over-scoped specs, wasting compute and tokens on ideas that were never buildable in 5 iterations. No tool exists to pre-screen spec complexity before committing to a build.
 
 ## Features
-- **Spec parsing** – robustly reads structured specification files (`.spec`, `.txt`, etc.).
-- **Quality scoring** – computes metrics such as redundancy, clarity, and conformance to style guides.
-- **Improvement suggestions** – generates concise, actionable rewrites to reduce size and improve readability.
-- **CLI interface** – simple commands for parsing, scoring, and suggesting.
-- **Extensible design** – modular parser, scorer, and suggester components can be replaced or extended.
-- **Test suite** – includes unit tests for core functionality to ensure reliability.
-- **Packaging** – modern `pyproject.toml` based distribution installable via `pip`.
+
+| Feature | Description |
+|---------|-------------|
+| Spec parsing | Reads `app_spec.txt` and extracts feature statements, dependency declarations, and integration markers. |
+| Feature counting | Tallies distinct features to gauge functional scope. |
+| External dependency detection | Identifies third‑party libraries or services referenced in the spec. |
+| Integration point analysis | Counts interfaces with external systems, APIs, or hardware. |
+| Iteration budget estimation | Computes an estimated number of development iterations based on weighted complexity factors. |
+| Threshold flagging | Highlights specs that exceed the default five‑iteration limit. |
+| Cut suggestion engine | Recommends concrete removals or simplifications to bring the spec under the limit. |
+| CLI interface | Provides a simple `specshrink` command with help, version, and configurable options. |
+
+## Quick Start
+
+1. Clone the repository  
+   ```bash
+   git clone https://github.com/m2ai-portfolio/SpecShrink.git
+   cd SpecShrink
+   ```
+2. Install the package (editable mode recommended for development)  
+   ```bash
+   pip install -e .
+   ```
+3. Run the tool on a spec file  
+   ```bash
+   specshrink path/to/your_app_spec.txt
+   ```
+
+## Examples
+
+**Basic scoring**  
+```bash
+$ specshrink fixtures/test_spec.txt
+Features: 6   External deps: 1   Integration points: 2   Est. iterations: 4
+Result: WITHIN threshold (5)
+```
+*Interpretation:* The spec is small enough to likely be completed in five iterations.
+
+**Custom iteration threshold**  
+```bash
+$ specshrink fixtures/over_spec.txt --max-iters 3
+Features: 14   External deps: 4   Integration points: 6   Est. iterations: 9
+Result: EXCEEDS threshold (3) – Suggested cuts: drop “real‑time analytics”, combine “login” and “session‑store”, remove optional “export‑PDF”
+```
+*Interpretation:* With a stricter three‑iteration goal, the tool proposes three specific cuts.
+
+**Using the suggester module directly**  
+```bash
+$ python -m specshrink.suggester fixtures/test_spec_2.txt
+Suggested cuts:
+  - Remove feature “legacy import”
+  - Merge “error handling” and “logging”
+  - Defer feature “batch processing” to v2
+```
+*Interpretation:* The suggester outputs a concise list of refactorings without the surrounding scoring metadata.
+
+## File Structure
+
+```
+SpecShrink/
+├── specshrink/              # Core source code
+│   ├── __init__.py
+│   ├── cli.py               # CLI entry point
+│   ├── parser.py            # Spec parsing logic
+│   ├── scorer.py            # Complexity scoring and threshold check
+│   └── suggester.py         # Cut suggestion engine
+├── tests/                   # Test suite
+│   ├── fixtures/            # Sample spec files for testing
+│   ├── test_parser.py
+│   ├── test_scorer.py
+│   └── test_suggester.py
+├── pyproject.toml           # Project configuration and build system
+├── README.md
+└── app_spec.txt             # Example specification file
+```
 
 ## Tech Stack
-- **Language**: Python 3.9+
-- **Packaging**: `setuptools` via `pyproject.toml`
-- **CLI building**: `argparse` (in `cli.py`)
-- **Testing**: `pytest` (tests under `tests/`)
-- **Other**: standard library only; no external dependencies required.
 
-## Quick Start / Installation
+| Technology | Purpose |
+|------------|---------|
+| Python 3.9+ | Implementation language |
+| pytest     | Unit testing framework |
+| setuptools | Packaging and distribution |
 
-```bash
-# Clone the repository
-git clone <repo-url>
-cd metroplex-ideaforge-135-r2
+## Contributing
 
-# Install in editable mode (recommended for development)
-pip install -e .
-
-# Or install from built distribution
-pip install .
-```
-
-After installation, the `specshrink` command is available:
-
-```bash
-specshrink --help
-```
-
-## Usage
-
-```bash
-# Parse a spec file and show a summary
-specshrink parse path/to/spec.txt
-
-# Score the spec (outputs a numeric quality score)
-specshrink score path/to/spec.txt
-
-# Generate improvement suggestions
-specshrink suggest path/to/spec.txt
-
-# Run the test suite
-pytest
-```
-
-## Architecture
-
-```
-specshrink/
-├── __init__.py
-├── cli.py        # Entry point; defines subcommands parse, score, suggest
-├── parser.py     # Reads and normalizes specification files into an internal AST
-├── scorer.py     # Computes quality metrics from the AST
-└── suggester.py  # Produces rewrite suggestions based on scorer output
-```
-
-- **cli.py** dispatches user commands to the appropriate module.  
-- **parser.py** turns raw text into a structured representation (e.g., sections, requirements, diagrams).  
-- **scorer.py** walks the AST and calculates scores for redundancy, vagueness, formatting, etc.  
-- **suggester.py** uses the scores to propose specific edits (e.g., merge duplicate requirements, reword ambiguous clauses).
+1. Fork the repository.  
+2. Make your changes on a topic branch.  
+3. Run the test suite (`pytest`) to ensure nothing breaks.  
+4. Submit a pull request with a clear description of the fix or feature.
 
 ## License
 
 MIT
 
-© 2025 SpecShrink Contributors. See `LICENSE` for details.
+## Author
+
+Matthew Snow -- [M2AI](https://m2ai.co) | [@m2ai-portfolio](https://github.com/m2ai-portfolio)
