@@ -14,115 +14,110 @@
 </p>
 
 ## What is this?
-
-SpecShrink is a command‑line utility that reads an `app_spec.txt` file, quantifies its scope, and predicts whether it can be built within a five‑iteration limit. It is aimed at developers and autonomous pipelines that need a fast pre‑screen to avoid wasting compute on over‑scoped ideas.
+SpecShrink is a command‑line utility that reads an `app_spec.txt` file, quantifies its scope, and estimates how many development iterations it will likely require. It is aimed at product leads and engineers who want to catch overly ambitious specifications before they consume CI resources.
 
 ```
-$ specshrink specs/example_app_spec.txt
-Features: 10   External deps: 3   Integration points: 5   Est. iterations: 7
-Result: EXCEEDS threshold (5) – Suggested cuts: remove feature “auto‑export”, merge “validation” and “sanitization”
+$ specshrink app_spec.txt
+Features: 14
+External dependencies: 4
+Integration points: 7
+Estimated iteration budget: 7
+⚠️ Spec likely exceeds 5 iterations
+Suggestions:
+  - Remove optional feature "advanced analytics"
+  - Combine API v1 and v2 clients
+  - Use existing auth service instead of custom
 ```
 
 ## Problem
-
 Autonomous build pipelines frequently fail on over-scoped specs, wasting compute and tokens on ideas that were never buildable in 5 iterations. No tool exists to pre-screen spec complexity before committing to a build.
 
 ## Features
-
 | Feature | Description |
 |---------|-------------|
-| Spec parsing | Reads `app_spec.txt` and extracts feature statements, dependency declarations, and integration markers. |
-| Feature counting | Tallies distinct features to gauge functional scope. |
-| External dependency detection | Identifies third‑party libraries or services referenced in the spec. |
-| Integration point analysis | Counts interfaces with external systems, APIs, or hardware. |
-| Iteration budget estimation | Computes an estimated number of development iterations based on weighted complexity factors. |
-| Threshold flagging | Highlights specs that exceed the default five‑iteration limit. |
-| Cut suggestion engine | Recommends concrete removals or simplifications to bring the spec under the limit. |
-| CLI interface | Provides a simple `specshrink` command with help, version, and configurable options. |
+| Spec parsing | Reads `app_spec.txt` and extracts structured sections |
+| Feature counting | Tallies numbered or bullet‑listed features in the spec |
+| Dependency detection | Identifies external libraries or services mentioned |
+| Integration point analysis | Counts distinct APIs, hooks, or external systems referenced |
+| Iteration estimation | Applies a heuristic to predict required development cycles |
+| Over‑scope flagging | Emits a warning when the estimated budget exceeds a threshold |
+| Improvement suggestions | Generates concrete cuts to bring the spec within limits |
+| JSON output | Optional machine‑readable format for CI integration |
 
 ## Quick Start
-
-1. Clone the repository  
-   ```bash
-   git clone https://github.com/m2ai-portfolio/SpecShrink.git
-   cd SpecShrink
-   ```
-2. Install the package (editable mode recommended for development)  
-   ```bash
-   pip install -e .
-   ```
-3. Run the tool on a spec file  
-   ```bash
-   specshrink path/to/your_app_spec.txt
-   ```
+1. Clone the repository:  
+   `git clone https://github.com/m2ai-portfolio/SpecShrink.git`
+2. Install the package in editable mode:  
+   `cd SpecShrink && pip install -e .`
+3. Run the tool on a spec file:  
+   `specshrink app_spec.txt`
 
 ## Examples
-
-**Basic scoring**  
-```bash
-$ specshrink fixtures/test_spec.txt
-Features: 6   External deps: 1   Integration points: 2   Est. iterations: 4
-Result: WITHIN threshold (5)
+### Basic scoring
+Run SpecShrink on the example spec included in the repo.  
 ```
-*Interpretation:* The spec is small enough to likely be completed in five iterations.
-
-**Custom iteration threshold**  
-```bash
-$ specshrink fixtures/over_spec.txt --max-iters 3
-Features: 14   External deps: 4   Integration points: 6   Est. iterations: 9
-Result: EXCEEDS threshold (3) – Suggested cuts: drop “real‑time analytics”, combine “login” and “session‑store”, remove optional “export‑PDF”
+$ specshrink app_spec.txt
+Features: 12
+External dependencies: 3
+Integration points: 5
+Estimated iteration budget: 5
+✅ Spec fits within 5 iterations
 ```
-*Interpretation:* With a stricter three‑iteration goal, the tool proposes three specific cuts.
-
-**Using the suggester module directly**  
-```bash
-$ python -m specshrink.suggester fixtures/test_spec_2.txt
-Suggested cuts:
-  - Remove feature “legacy import”
-  - Merge “error handling” and “logging”
-  - Defer feature “batch processing” to v2
+### Custom iteration threshold
+Adjust the acceptable iteration limit with `--threshold`.  
 ```
-*Interpretation:* The suggester outputs a concise list of refactorings without the surrounding scoring metadata.
+$ specshrink app_spec.txt --threshold 4
+Features: 12
+External dependencies: 3
+Integration points: 5
+Estimated iteration budget: 5
+⚠️ Spec likely exceeds 4 iterations
+Suggestions:
+  - Drop the "real‑time dashboard" feature
+  - Replace custom WebSocket handler with a managed service
+```
+### JSON output for automation
+Obtain a machine‑readable result for use in scripts or CI pipelines.  
+```
+$ specshrink app_spec.txt --format json
+{"features":12,"external_deps":3,"integration_points":5,"estimated_iterations":5,"over_threshold":false,"suggestions":[]}
+```
 
 ## File Structure
-
 ```
 SpecShrink/
-├── specshrink/              # Core source code
-│   ├── __init__.py
-│   ├── cli.py               # CLI entry point
-│   ├── parser.py            # Spec parsing logic
-│   ├── scorer.py            # Complexity scoring and threshold check
-│   └── suggester.py         # Cut suggestion engine
-├── tests/                   # Test suite
-│   ├── fixtures/            # Sample spec files for testing
-│   ├── test_parser.py
-│   ├── test_scorer.py
-│   └── test_suggester.py
-├── pyproject.toml           # Project configuration and build system
-├── README.md
-└── app_spec.txt             # Example specification file
+  assets/               # Infographic used in the README
+  specshrink/           # Core source code
+    __init__.py
+    cli.py              # Command‑line interface entry point
+    parser.py           # Parses app_spec.txt into a data model
+    scorer.py           # Computes complexity metrics and iteration budget
+    suggester.py        # Generates actionable reduction suggestions
+  tests/                # Unit test suite
+    fixtures/           # Sample spec files for testing
+    test_parser.py
+    test_scorer.py
+    test_suggester.py
+  pyproject.toml        # Project configuration and dependencies
+  README.md
+  app_spec.txt          # Example specification for demonstration
+  init.sh               # Helper script to set up a development environment
 ```
 
 ## Tech Stack
-
 | Technology | Purpose |
 |------------|---------|
-| Python 3.9+ | Implementation language |
-| pytest     | Unit testing framework |
-| setuptools | Packaging and distribution |
+| Python 3.9+ | Core language implementation |
+| Click | Building the CLI interface |
+| PyYAML | Parsing YAML‑styled sections in specs (if used) |
+| toml | Reading project configuration from pyproject.toml |
 
 ## Contributing
-
-1. Fork the repository.  
-2. Make your changes on a topic branch.  
-3. Run the test suite (`pytest`) to ensure nothing breaks.  
-4. Submit a pull request with a clear description of the fix or feature.
+Fork the repository, make your changes, run the test suite, and submit a pull request.  
+Ensure new features include corresponding unit tests.
 
 ## License
-
 MIT
 
 ## Author
-
 Matthew Snow -- [M2AI](https://m2ai.co) | [@m2ai-portfolio](https://github.com/m2ai-portfolio)
